@@ -58,7 +58,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 export class AppComponent implements OnInit {
   // ⚠️ COLOCA TU URL Y TU CLAVE LEGACY ANON CORRECTAS DE SUPABASE
     supabase = createClient(
-    'https://srvytgtkcasuylosgzej',
+    'https://srvytgtkcasuylosgzej.supabase.co',
     'srvytgtkcasuylosgzej'
   );
 
