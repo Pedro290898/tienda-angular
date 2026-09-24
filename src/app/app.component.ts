@@ -4,288 +4,152 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 @Component({
   selector: 'app-root',
   template: `
-    <div style="font-family: sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div style="font-family: sans-serif; max-width: 1000px; margin: 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
       
-      <!-- 1. PANTALLA DE LOGIN (SI NO HAY USUARIO) -->
+      <!-- LOGIN -->
       <div *ngIf="!user">
         <h2>{{ esRegistro ? 'Registrar Tienda' : 'Iniciar Sesión' }}</h2>
-        
         <div style="margin-bottom: 10px;" *ngIf="esRegistro">
           <label style="display: block; margin-bottom: 5px;">Nombre de tu Tienda:</label>
-          <input type="text" [(ngModel)]="nombreTienda" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+          <input type="text" [(nombreTienda)]="nombreTienda" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
         </div>
-
         <div style="margin-bottom: 10px;">
-          <label style="display: block; margin-bottom: 5px;">Correo Electrónico:</label>
+          <label style="display: block; margin-bottom: 5px;">Correo:</label>
           <input type="email" [(ngModel)]="email" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
         </div>
-
         <div style="margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 5px;">Contraseña:</label>
           <input type="password" [(ngModel)]="password" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
         </div>
-
-        <button (click)="ejecutarAccion()" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
-          {{ esRegistro ? 'Crear Cuenta y Tienda' : 'Entrar' }}
-        </button>
-
-        <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-          <a href="#" (click)="$event.preventDefault(); esRegistro = !esRegistro" style="color: #007bff; text-decoration: none;">
-            {{ esRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate aquí' }}
-          </a>
-        </p>
+        <button (click)="ejecutarAccion()" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">{{ esRegistro ? 'Crear Cuenta' : 'Entrar' }}</button>
+        <p style="text-align: center; margin-top: 15px;"><a href="#" (click)="$event.preventDefault(); esRegistro = !esRegistro">{{ esRegistro ? 'Inicia sesión' : 'Regístrate aquí' }}</a></p>
       </div>
 
-      <!-- 2. PANTALLA PRINCIPAL DEL SISTEMA (USUARIO LOGUEADO) -->
+      <!-- PANTALLA PRINCIPAL DEL SISTEMA -->
       <div *ngIf="user">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
           <div>
-            <h2 style="margin: 0; color: #007bff;">🏪 Sistema de Inventario</h2>
+            <h2 style="margin: 0; color: #007bff;">🏪 Sistema POS Modular</h2>
             <small style="color: #666;">Usuario: {{ user.email }}</small>
           </div>
-          <button (click)="cerrarSesion()" style="padding: 8px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            Cerrar Sesión
-          </button>
-        </div>
-
-        <!-- FORMULARIO PARA AGREGAR NUEVO PRODUCTO -->
-        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 25px; border: 1px solid #e9ecef;">
-          <h3 style="margin-top: 0; color: #333;">📦 Agregar Producto al Inventario</h3>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            
-            <div style="flex: 2; min-width: 200px;">
-              <label style="display:block; font-size:12px; margin-bottom:3px;">Nombre del Producto:</label>
-              <input type="text" [(ngModel)]="nuevoProd.nombre" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div style="flex: 1; min-width: 100px;">
-              <label style="display:block; font-size:12px; margin-bottom:3px;">Precio ($):</label>
-              <input type="number" [(ngModel)]="nuevoProd.precio" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div style="flex: 1; min-width: 100px;">
-              <label style="display:block; font-size:12px; margin-bottom:3px;">Cantidad (Stock):</label>
-              <input type="number" [(ngModel)]="nuevoProd.stock" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            </div>
-
-            <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
-              <button (click)="guardarProducto()" style="width:100%; padding:10px; background-color: #28a745; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">
-                ＋ Guardar
-              </button>
-            </div>
-
+          <div>
+            <button (click)="pestanaActual = 'inventario'" [style.background-color]="pestanaActual === 'inventario' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📦 Inventario</button>
+            <button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
+            <button (click)="cerrarSesion()" style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 15px;">Salir</button>
           </div>
         </div>
 
-        <!-- TABLA DE LISTADO DE PRODUCTOS -->
-        <h3>📋 Lista de Existencias</h3>
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-              <tr style="background-color: #007bff; color: white;">
-                <th style="padding: 10px; border: 1px solid #dee2e6;">ID</th>
-                <th style="padding: 10px; border: 1px solid #dee2e6;">Producto</th>
-                <th style="padding: 10px; border: 1px solid #dee2e6;">Precio</th>
-                <th style="padding: 10px; border: 1px solid #dee2e6;">Stock</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let prod of productos" style="border-bottom: 1px solid #dee2e6;">
-                <td style="padding: 10px; border: 1px solid #dee2e6; color: #666;">{{ prod.id }}</td>
-                <td style="padding: 10px; border: 1px solid #dee2e6; font-weight: bold;">{{ prod.nombre }}</td>
-                <td style="padding: 10px; border: 1px solid #dee2e6; color: #28a745;">\${{ prod.precio }}</td>
-                <td style="padding: 10px; border: 1px solid #dee2e6;" [style.color]="prod.stock <= 5 ? 'red' : 'black'">
-                  {{ prod.stock }} pzas {{ prod.stock <= 5 ? '(Bajo Stock)' : '' }}
-                </td>
-              </tr>
-              <tr *ngIf="productos.length === 0">
-                <td colspan="4" style="text-align: center; padding: 20px; color: #999;">No hay productos registrados en tu inventario aún.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- USAMOS LOS COMPONENTES HIJOS PEQUEÑOS -->
+        <app-inventario *ngIf="pestanaActual === 'inventario'" [productos]="productos" (onGuardar)="guardarProducto($event)"></app-inventario>
+        <app-ventas *ngIf="pestanaActual === 'ventas'" [productos]="productos" [carrito]="carrito" [total]="obtenerTotal()" (onAgregar)="agregarAlCarrito($event)" (onCambiarCant)="cambiarCantidad($event)" (cobrar)="procesarVenta()"></app-ventas>
       </div>
 
-      <!-- MENSAJES DE ERROR O NOTIFICACIONES -->
       <p style="color: #dc3545; text-align: center; margin-top: 15px; font-weight: bold;" *ngIf="mensajeError">{{ mensajeError }}</p>
-
+      <p style="color: #28a745; text-align: center; margin-top: 15px; font-weight: bold;" *ngIf="mensajeExito">{{ mensajeExito }}</p>
     </div>
-  `,
+  `
 })
 export class AppComponent implements OnInit {
-  // Conexión real a tu base de datos
   supabase: SupabaseClient = createClient(
-    'https://srvytgtkcasuylosgzej.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwOTMxNzAsImV4cCI6MjEwNDY2OTE3MH0.2RD6qneBwTq6IH4QixBOTpJLq9of8BEFKcqicEeyGp4' // <-- REVISA QUE ESTA SEA TU CLAVE COMPLETA DE SUPABASE
+    'https://supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTEyMjMzNDMsImV4cCI6MjAyNjgxOTM0M30.2RDBqneYitXbIOnuA1bcljE2Z8XoU7YitXbIOnuA1bcljE2Z8XoU7Y' // <-- REVISA TU CLAVE DE SUPABASE
   );
 
   user: any = null;
   esRegistro = false;
-  
-  // Variables de Autenticación
-  nombreTienda = '';
-  email = '';
-  password = '';
-  mensajeError = '';
-
-  // Variables de Inventario
-  productos: any[] = [];
-  nuevoProd = {
-    nombre: '',
-    precio: null,
-    stock: null
-  };
+  pestanaActual = 'inventario';
+  nombreTienda = ''; email = ''; password = ''; mensajeError = ''; mensajeExito = '';
+  productos: any[] = []; carrito: any[] = [];
 
   async ngOnInit() {
-    // 1. Verificar sesión activa al cargar
     const { data } = await this.supabase.auth.getSession();
     this.user = data.session?.user || null;
+    if (this.user) this.cargarProductos();
 
-    if (this.user) {
-      this.cargarProductos();
-    }
-
-    // 2. Escuchar cambios de sesión en vivo
     this.supabase.auth.onAuthStateChange((_event, session) => {
       this.user = session?.user || null;
-      if (this.user) {
-        this.cargarProductos();
-      } else {
-        this.productos = [];
-      }
+      if (this.user) this.cargarProductos();
+      else { this.productos = []; this.carrito = []; }
     });
   }
 
-  // FUNCIÓN PARA CARGAR LOS PRODUCTOS DESDE SUPABASE
   async cargarProductos() {
-    const { data, error } = await this.supabase
-      .from('productos')
-      .select('*')
-      .order('id', { ascending: false });
-
-    if (error) {
-      this.mensajeError = 'Error al cargar productos: ' + error.message;
-    } else {
-      this.productos = data || [];
-    }
+    const { data, error } = await this.supabase.from('productos').select('*').order('id', { ascending: false });
+    if (!error) this.productos = data || [];
   }
 
-    // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO CORREGIDA SIN ERRORES DE VARIABLE
-  async guardarProducto() {
-    this.mensajeError = '';
-    
-    if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null) {
-      this.mensajeError = 'Por favor, llena todos los campos del producto.';
-      return;
-    }
-
+  async guardarProducto(nuevoProd: any) {
+    this.mensajeError = ''; this.mensajeExito = '';
     try {
-      // 1. Declaramos la variable una sola vez aquí arriba
-      let idFinalTienda: number = 1;
+      let idFinalTienda = 1;
+      const { data: tiendaData } = await this.supabase.from('tiendas').select('id').eq('user_id', this.user.id).single();
+      if (tiendaData) idFinalTienda = tiendaData.id;
 
-      // 2. Buscamos el ID de la tienda del usuario en Supabase
-      const { data: tiendaData, error: tiendaError } = await this.supabase
-        .from('tiendas')
-        .select('id')
-        .eq('user_id', this.user.id)
-        .single();
+      const { error } = await this.supabase.from('productos').insert([{ 
+        nombre: nuevoProd.nombre, precio: nuevoProd.precio, stock: nuevoProd.stock, tienda_id: idFinalTienda
+      }]);
 
-      // Si encuentra la tienda, le asignamos su ID real a la variable
-      if (!tiendaError && tiendaData) {
-        idFinalTienda = tiendaData.id;
-      }
-
-      // 3. Guardamos el producto con el ID asignado
-      const { data, error } = await this.supabase
-        .from('productos')
-        .insert([
-          { 
-            nombre: this.nuevoProd.nombre, 
-            precio: this.nuevoProd.precio, 
-            stock: this.nuevoProd.stock,
-            tienda_id: idFinalTienda
-          }
-        ])
-        .select();
-
-      if (error) {
-        this.mensajeError = 'Error al guardar producto: ' + error.message;
-      } else {
-        // Limpiar el formulario y recargar la lista
-        this.nuevoProd = { nombre: '', precio: null, stock: null };
-        this.cargarProductos();
-      }
-
-    } catch (e: any) {
-      this.mensajeError = 'Hubo un problema inesperado: ' + e.message;
-    }
+      if (error) this.mensajeError = error.message;
+      else { this.mensajeExito = '¡Producto agregado!'; this.cargarProductos(); }
+    } catch (e: any) { this.mensajeError = e.message; }
   }
 
-    
-/*  // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS
-  async guardarProducto() {
-    this.mensajeError = '';
-    
-    if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null) {
-      this.mensajeError = 'Por favor, llena todos los campos del producto.';
-      return;
-    }
+  agregarAlCarrito(producto: any) {
+    this.mensajeError = ''; this.mensajeExito = '';
+    if (producto.stock <= 0) { this.mensajeError = '¡No hay stock!'; return; }
+    const existente = this.carrito.find(item => item.id === producto.id);
+    if (existente) {
+      if (existente.cantidad >= producto.stock) { this.mensajeError = 'Límite de stock alcanzado.'; return; }
+      existente.cantidad++;
+    } else { this.carrito.push({ ...producto, cantidad: 1 }); }
+  }
 
-    const { data, error } = await this.supabase
-      .from('productos')
-      .insert([
-        { 
-          nombre: this.nuevoProd.nombre, 
-          precio: this.nuevoProd.precio, 
-          stock: this.nuevoProd.stock 
-        }
-      ])
-      .select();
+  cambiarCantidad(evento: any) {
+    const item = this.carrito[evento.index];
+    const prodOriginal = this.productos.find(p => p.id === item.id);
+    item.cantidad += evento.cambio;
+    if (item.cantidad > prodOriginal.stock) item.cantidad = prodOriginal.stock;
+    if (item.cantidad <= 0) this.carrito.splice(evento.index, 1);
+  }
 
-    if (error) {
-      this.mensajeError = 'Error al guardar producto: ' + error.message;
-    } else {
-      // Limpiar el formulario y recargar la lista
-      this.nuevoProd = { nombre: '', precio: null, stock: null };
+  obtenerTotal() { return this.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0); }
+
+  async procesarVenta() {
+    this.mensajeError = ''; this.mensajeExito = '';
+    try {
+      let idFinalTienda = 1;
+      const { data: tiendaData } = await this.supabase.from('tiendas').select('id').eq('user_id', this.user.id).single();
+      if (tiendaData) idFinalTienda = tiendaData.id;
+
+      const { data: ventaGuardada, error: ventaError } = await this.supabase
+        .from('ventas').insert([{ tienda_id: idFinalTienda, total: this.obtenerTotal() }]).select().single();
+
+      if (ventaError) { this.mensajeError = ventaError.message; return; }
+
+      for (const item of this.carrito) {
+        await this.supabase.from('detalle_ventas').insert([{
+          venta_id: ventaGuardada.id, producto_id: item.id, cantidad: item.cantidad, precio_unitario: item.precio
+        }]);
+        await this.supabase.from('productos').update({ stock: item.stock - item.cantidad }).eq('id', item.id);
+      }
+
+      this.mensajeExito = '¡Venta cobrada con éxito!';
+      this.carrito = [];
       this.cargarProductos();
-    }
-  }*/
+    } catch (e: any) { this.mensajeError = e.message; }
+  }
 
-  // ACCIONES DE LOGIN / REGISTRO
   async ejecutarAccion() {
     this.mensajeError = '';
-    
     if (this.esRegistro) {
-      if (!this.nombreTienda) {
-        this.mensajeError = 'Por favor, escribe el nombre de tu tienda.';
-        return;
-      }
-      
-      const { data, error } = await this.supabase.auth.signUp({
-        email: this.email,
-        password: this.password,
-      });
-
+      const { data, error } = await this.supabase.auth.signUp({ email: this.email, password: this.password });
       if (error) { this.mensajeError = error.message; return; }
-
-      if (data.user) {
-        await this.supabase.from('tiendas').insert([
-          { nombre: this.nombreTienda, user_id: data.user.id }
-        ]);
-      }
-
+      if (data.user) await this.supabase.from('tiendas').insert([{ nombre: this.nombreTienda, user_id: data.user.id }]);
     } else {
-      const { error } = await this.supabase.auth.signInWithPassword({
-        email: this.email,
-        password: this.password,
-      });
-
+      const { error } = await this.supabase.auth.signInWithPassword({ email: this.email, password: this.password });
       if (error) this.mensajeError = error.message;
     }
   }
 
-  async cerrarSesion() {
-    await this.supabase.auth.signOut();
-    this.user = null;
-  }
+  async cerrarSesion() { await this.supabase.auth.signOut(); this.user = null; }
 }
