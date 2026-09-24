@@ -218,3 +218,4 @@ export class AppComponent implements OnInit {
     await this.supabase.auth.signOut();
   }
 }
+// publico
