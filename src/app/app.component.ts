@@ -229,8 +229,7 @@ export class AppComponent implements OnInit {
 }
 
   // 👇 AQUÍ COLOCAS TU NUEVA FUNCIÓN LOGICA DE COMPRAS
-    async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
-    // Validación de seguridad para el compilador estricto de Angular
+     async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
     if (!this) return;
 
     this.mensajeError = ''; 
@@ -263,7 +262,6 @@ export class AppComponent implements OnInit {
           .eq('id', item.id);
       }
 
-      // Usamos una función flecha estándar para mantener el contexto seguro
       if (typeof this.mostrarMensajeExito === 'function') {
         this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
       }
@@ -276,7 +274,6 @@ export class AppComponent implements OnInit {
       }
     }
   }
-
 
 
 // publico
