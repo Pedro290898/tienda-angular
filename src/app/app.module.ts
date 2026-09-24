@@ -12,7 +12,8 @@ import { ComprasComponent } from './compras.component';
   declarations: [
     AppComponent,
     InventarioComponent,
-    VentasComponent
+    VentasComponent,
+    ComprasComponent
   ],
   imports: [
     BrowserModule,
