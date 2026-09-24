@@ -15,7 +15,7 @@
           "options": {
             "outputPath": "dist/tienda-angular",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "main": "src/index.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.json",
             "assets": [],
