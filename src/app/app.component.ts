@@ -170,7 +170,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-    // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS CORREGIDA
+    // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO CORREGIDA SIN ERRORES DE VARIABLE
   async guardarProducto() {
     this.mensajeError = '';
     
@@ -180,21 +180,22 @@ export class AppComponent implements OnInit {
     }
 
     try {
-      // 1. Buscamos primero el ID de la tienda que le pertenece al usuario que inició sesión
+      // 1. Declaramos la variable una sola vez aquí arriba
+      let idFinalTienda: number = 1;
+
+      // 2. Buscamos el ID de la tienda del usuario en Supabase
       const { data: tiendaData, error: tiendaError } = await this.supabase
         .from('tiendas')
         .select('id')
         .eq('user_id', this.user.id)
         .single();
 
-      if (tiendaError || !tiendaData) {
-        // Si no encuentra una tienda en la base de datos, le asignamos la número 1 por defecto para pruebas rápidas
-        var idFinalTienda = 1;
-      } else {
-        var idFinalTienda = tiendaData.id;
+      // Si encuentra la tienda, le asignamos su ID real a la variable
+      if (!tiendaError && tiendaData) {
+        idFinalTienda = tiendaData.id;
       }
 
-      // 2. Guardamos el producto incluyendo el ID de la tienda obligatorio
+      // 3. Guardamos el producto con el ID asignado
       const { data, error } = await this.supabase
         .from('productos')
         .insert([
@@ -202,7 +203,7 @@ export class AppComponent implements OnInit {
             nombre: this.nuevoProd.nombre, 
             precio: this.nuevoProd.precio, 
             stock: this.nuevoProd.stock,
-            tienda_id: idFinalTienda // <-- ¡Aquí le mandamos el ID para que ya no tire error!
+            tienda_id: idFinalTienda
           }
         ])
         .select();
@@ -220,7 +221,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-
+    
 /*  // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS
   async guardarProducto() {
     this.mensajeError = '';
