@@ -11,7 +11,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
         <h2>{{ esRegistro ? 'Registrar Tienda' : 'Iniciar Sesión' }}</h2>
         <div style="margin-bottom: 10px;" *ngIf="esRegistro">
           <label style="display: block; margin-bottom: 5px;">Nombre de tu Tienda:</label>
-          <input type="text" [(nombreTienda)]="nombreTienda" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+          <input type="text" [(ngModel)]="nombreTienda" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
         </div>
         <div style="margin-bottom: 10px;">
           <label style="display: block; margin-bottom: 5px;">Correo:</label>
