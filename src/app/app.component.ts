@@ -50,10 +50,16 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
   `
 })
 export class AppComponent implements OnInit {
-  supabase: SupabaseClient = createClient(
+
+   supabase = createClient(
+    'https://srvytgtkcasuylosgzej.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwOTMxNzAsImV4cCI6MjEwNDY2OTE3MH0.2RD6qneBwTq6IH4QixBOTpJLq9of8BEFKcqicEeyGp4'
+  );
+
+  /*supabase: SupabaseClient = createClient(
     'https:/srvytgtkcasuylosgzej/supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwOTMxNzAsImV4cCI6MjEwNDY2OTE3MH0.2RD6qneBwTq6IH4QixBOTpJLq9of8BEFKcqicEeyGp4' // <-- REVISA TU CLAVE DE SUPABASE
-  );
+  );*/
 
   user: any = null;
   esRegistro = false;
