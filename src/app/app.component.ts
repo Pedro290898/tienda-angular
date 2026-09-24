@@ -219,3 +219,5 @@ export class AppComponent implements OnInit {
   }
 }
 // publico
+
+//privado
