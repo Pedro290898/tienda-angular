@@ -229,9 +229,13 @@ export class AppComponent implements OnInit {
 }
 
   // 👇 AQUÍ COLOCAS TU NUEVA FUNCIÓN LOGICA DE COMPRAS
-  async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
-    this.mensajeError = ''; this.mensajeExito = '';
-    if (eventoCompra.carrito.length === 0) return;
+    async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
+    // Validación de seguridad para el compilador estricto de Angular
+    if (!this) return;
+
+    this.mensajeError = ''; 
+    this.mensajeExito = '';
+    if (!eventoCompra || !eventoCompra.carrito || eventoCompra.carrito.length === 0) return;
 
     try {
       const { data: compraGuardada, error: compraError } = await this.supabase
@@ -240,7 +244,10 @@ export class AppComponent implements OnInit {
         .select()
         .single();
 
-      if (compraError) { this.mensajeError = compraError.message; return; }
+      if (compraError) { 
+        this.mensajeError = compraError.message; 
+        return; 
+      }
 
       for (const item of eventoCompra.carrito) {
         await this.supabase.from('detalle_compras').insert([{
@@ -252,16 +259,24 @@ export class AppComponent implements OnInit {
 
         await this.supabase
           .from('productos')
-          .update({ stock: item.stock + item.cantidad })
+          .update({ stock: (item.stock || 0) + (item.cantidad || 0) })
           .eq('id', item.id);
       }
 
-      this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
-      this.cargarProductos();
+      // Usamos una función flecha estándar para mantener el contexto seguro
+      if (typeof this.mostrarMensajeExito === 'function') {
+        this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
+      }
+      if (typeof this.cargarProductos === 'function') {
+        this.cargarProductos();
+      }
     } catch (e: any) { 
-      this.mensajeError = e.message; 
+      if (this) {
+        this.mensajeError = e?.message || 'Error desconocido al procesar la compra'; 
+      }
     }
   }
+
 
 
 // publico
