@@ -51,52 +51,94 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 })
 export class AppComponent implements OnInit {
 
-   supabase = createClient(
+  // NOTA: Para producción real en Vercel, sustituye estos strings por las variables de entorno
+  // Ejemplo: environment.supabaseUrl, environment.supabaseKey
+  supabase: SupabaseClient = createClient(
     'https://srvytgtkcasuylosgzej.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwOTMxNzAsImV4cCI6MjEwNDY2OTE3MH0.2RD6qneBwTq6IH4QixBOTpJLq9of8BEFKcqicEeyGp4'
   );
-
-  /*supabase: SupabaseClient = createClient(
-    'https:/srvytgtkcasuylosgzej/supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNydnl0Z3RrY2FzdXlsb3NnemVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwOTMxNzAsImV4cCI6MjEwNDY2OTE3MH0.2RD6qneBwTq6IH4QixBOTpJLq9of8BEFKcqicEeyGp4' // <-- REVISA TU CLAVE DE SUPABASE
-  );*/
 
   user: any = null;
   esRegistro = false;
   pestanaActual = 'inventario';
   nombreTienda = ''; email = ''; password = ''; mensajeError = ''; mensajeExito = '';
   productos: any[] = []; carrito: any[] = [];
+  idTiendaUsuario: number | null = null; // Guardamos el ID de la tienda del usuario actual
 
   async ngOnInit() {
     const { data } = await this.supabase.auth.getSession();
     this.user = data.session?.user || null;
-    if (this.user) this.cargarProductos();
+    if (this.user) this.inicializarDatosUsuario();
 
     this.supabase.auth.onAuthStateChange((_event, session) => {
       this.user = session?.user || null;
-      if (this.user) this.cargarProductos();
-      else { this.productos = []; this.carrito = []; }
+      if (this.user) {
+        this.inicializarDatosUsuario();
+      } else { 
+        this.productos = []; 
+        this.carrito = []; 
+        this.idTiendaUsuario = null;
+      }
     });
   }
 
+  // Método auxiliar para limpiar los mensajes de éxito automáticamente
+  mostrarMensajeExito(mensaje: string) {
+    this.mensajeExito = mensaje;
+    setTimeout(() => {
+      this.mensajeExito = '';
+    }, 3500); // Se limpia automáticamente tras 3.5 segundos
+  }
+
+  // Obtenemos primero el ID de la tienda para no repetir la consulta repetidamente
+  async inicializarDatosUsuario() {
+    try {
+      const { data: tiendaData, error } = await this.supabase
+        .from('tiendas')
+        .select('id')
+        .eq('user_id', this.user.id)
+        .single();
+      
+      if (!error && tiendaData) {
+        this.idTiendaUsuario = tiendaData.id;
+      } else {
+        this.idTiendaUsuario = 1; // Fallback por defecto si no encuentra registro en la tabla tiendas
+      }
+      this.cargarProductos();
+    } catch (e) {
+      this.idTiendaUsuario = 1;
+      this.cargarProductos();
+    }
+  }
+
   async cargarProductos() {
-    const { data, error } = await this.supabase.from('productos').select('*').order('id', { ascending: false });
+    // Si estás usando RLS en Supabase no requieres obligatoriamente el .eq(), 
+    // pero añadirlo explícitamente en el código blinda tu lógica multitenant.
+    const { data, error } = await this.supabase
+      .from('productos')
+      .select('*')
+      .eq('tienda_id', this.idTiendaUsuario)
+      .order('id', { ascending: false });
+
     if (!error) this.productos = data || [];
   }
 
   async guardarProducto(nuevoProd: any) {
     this.mensajeError = ''; this.mensajeExito = '';
     try {
-      let idFinalTienda = 1;
-      const { data: tiendaData } = await this.supabase.from('tiendas').select('id').eq('user_id', this.user.id).single();
-      if (tiendaData) idFinalTienda = tiendaData.id;
-
       const { error } = await this.supabase.from('productos').insert([{ 
-        nombre: nuevoProd.nombre, precio: nuevoProd.precio, stock: nuevoProd.stock, tienda_id: idFinalTienda
+        nombre: nuevoProd.nombre, 
+        precio: nuevoProd.precio, 
+        stock: nuevoProd.stock, 
+        tienda_id: this.idTiendaUsuario
       }]);
 
-      if (error) this.mensajeError = error.message;
-      else { this.mensajeExito = '¡Producto agregado!'; this.cargarProductos(); }
+      if (error) {
+        this.mensajeError = error.message;
+      } else { 
+        this.mostrarMensajeExito('¡Producto agregado!'); 
+        this.cargarProductos(); 
+      }
     } catch (e: any) { this.mensajeError = e.message; }
   }
 
@@ -122,13 +164,14 @@ export class AppComponent implements OnInit {
 
   async procesarVenta() {
     this.mensajeError = ''; this.mensajeExito = '';
-    try {
-      let idFinalTienda = 1;
-      const { data: tiendaData } = await this.supabase.from('tiendas').select('id').eq('user_id', this.user.id).single();
-      if (tiendaData) idFinalTienda = tiendaData.id;
+    if (this.carrito.length === 0) return; // Validación extra de seguridad
 
+    try {
       const { data: ventaGuardada, error: ventaError } = await this.supabase
-        .from('ventas').insert([{ tienda_id: idFinalTienda, total: this.obtenerTotal() }]).select().single();
+        .from('ventas')
+        .insert([{ tienda_id: this.idTiendaUsuario, total: this.obtenerTotal() }])
+        .select()
+        .single();
 
       if (ventaError) { this.mensajeError = ventaError.message; return; }
 
@@ -139,7 +182,7 @@ export class AppComponent implements OnInit {
         await this.supabase.from('productos').update({ stock: item.stock - item.cantidad }).eq('id', item.id);
       }
 
-      this.mensajeExito = '¡Venta cobrada con éxito!';
+      this.mostrarMensajeExito('¡Venta cobrada con éxito!');
       this.carrito = [];
       this.cargarProductos();
     } catch (e: any) { this.mensajeError = e.message; }
@@ -147,15 +190,31 @@ export class AppComponent implements OnInit {
 
   async ejecutarAccion() {
     this.mensajeError = '';
-    if (this.esRegistro) {
-      const { data, error } = await this.supabase.auth.signUp({ email: this.email, password: this.password });
-      if (error) { this.mensajeError = error.message; return; }
-      if (data.user) await this.supabase.from('tiendas').insert([{ nombre: this.nombreTienda, user_id: data.user.id }]);
-    } else {
-      const { error } = await this.supabase.auth.signInWithPassword({ email: this.email, password: this.password });
-      if (error) this.mensajeError = error.message;
+    try {
+      if (this.esRegistro) {
+        // REGISTRO DE USUARIO NUEVO
+        const { data, error } = await this.supabase.auth.signUp({ email: this.email, password: this.password });
+        if (error) { this.mensajeError = error.message; return; }
+        
+        if (data?.user) {
+          // Si el usuario se crea con éxito, creamos su registro de Tienda correspondiente
+          await this.supabase.from('tiendas').insert([{
+            nombre: this.nombreTienda || 'Mi Tienda Modular',
+            user_id: data.user.id
+          }]);
+          this.mostrarMensajeExito('¡Cuenta y tienda creadas con éxito!');
+        }
+      } else {
+        // INICIO DE SESIÓN
+        const { error } = await this.supabase.auth.signInWithPassword({ email: this.email, password: this.password });
+        if (error) this.mensajeError = error.message;
+      }
+    } catch (e: any) {
+      this.mensajeError = e.message;
     }
   }
 
-  async cerrarSesion() { await this.supabase.auth.signOut(); this.user = null; }
+  async cerrarSesion() {
+    await this.supabase.auth.signOut();
+  }
 }
