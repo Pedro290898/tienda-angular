@@ -33,16 +33,25 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
             <small style="color: #666;">Usuario: {{ user.email }}</small>
           </div>
           <div>
-            <button (click)="pestanaActual = 'inventario'" [style.background-color]="pestanaActual === 'inventario' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📦 Inventario</button>
-            <button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
-            <button (click)="cerrarSesion()" style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 15px;">Salir</button>
+          <button (click)="pestanaActual = 'inventario'" [style.background-color]="pestanaActual === 'inventario' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📦 Inventario</button>
+
+<!-- NUEVO BOTÓN DE COMPRAS -->
+<button (click)="pestanaActual = 'compras'" [style.background-color]="pestanaActual === 'compras' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">🛒 Registrar Compra</button>
+
+<button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
+
           </div>
         </div>
 
         <!-- USAMOS LOS COMPONENTES HIJOS PEQUEÑOS -->
         <app-inventario *ngIf="pestanaActual === 'inventario'" [productos]="productos" (onGuardar)="guardarProducto($event)"></app-inventario>
-        <app-ventas *ngIf="pestanaActual === 'ventas'" [productos]="productos" [carrito]="carrito" [total]="obtenerTotal()" (onAgregar)="agregarAlCarrito($event)" (onCambiarCant)="cambiarCantidad($event)" (cobrar)="procesarVenta()"></app-ventas>
-      </div>
+
+<!-- NUEVA INSTANCIACIÓN -->
+<app-compras *ngIf="pestanaActual === 'compras'" [productos]="productos" (onCompraFinalizada)="procesarCompraGlobal($event)"></app-compras>
+
+<app-ventas *ngIf="pestanaActual === 'ventas'" [productos]="productos" [carrito]="carrito" [total]="obtenerTotal()" (onAgregar)="agregarAlCarrito($event)" (onCambiarCant)="cambiarCantidad($event)" (cobrar)="procesarVenta()"></app-ventas>
+        
+        </div>
 
       <p style="color: #dc3545; text-align: center; margin-top: 15px; font-weight: bold;" *ngIf="mensajeError">{{ mensajeError }}</p>
       <p style="color: #28a745; text-align: center; margin-top: 15px; font-weight: bold;" *ngIf="mensajeExito">{{ mensajeExito }}</p>
@@ -218,6 +227,43 @@ export class AppComponent implements OnInit {
     await this.supabase.auth.signOut();
   }
 }
+
+  // 👇 AQUÍ COLOCAS TU NUEVA FUNCIÓN LOGICA DE COMPRAS
+  async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
+    this.mensajeError = ''; this.mensajeExito = '';
+    if (eventoCompra.carrito.length === 0) return;
+
+    try {
+      const { data: compraGuardada, error: compraError } = await this.supabase
+        .from('compras')
+        .insert([{ tienda_id: this.idTiendaUsuario, total: eventoCompra.total }])
+        .select()
+        .single();
+
+      if (compraError) { this.mensajeError = compraError.message; return; }
+
+      for (const item of eventoCompra.carrito) {
+        await this.supabase.from('detalle_compras').insert([{
+          compra_id: compraGuardada.id,
+          producto_id: item.id,
+          cantidad: item.cantidad,
+          precio_costo: item.precio_costo
+        }]);
+
+        await this.supabase
+          .from('productos')
+          .update({ stock: item.stock + item.cantidad })
+          .eq('id', item.id);
+      }
+
+      this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
+      this.cargarProductos();
+    } catch (e: any) { 
+      this.mensajeError = e.message; 
+    }
+  }
+
+
 // publico
 
 //privado
