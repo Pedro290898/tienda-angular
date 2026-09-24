@@ -226,17 +226,18 @@ export class AppComponent implements OnInit {
   async cerrarSesion() {
     await this.supabase.auth.signOut();
   }
-}
+
 
   // 👇 AQUÍ COLOCAS TU NUEVA FUNCIÓN LOGICA DE COMPRAS
-     async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
-    if (!this) return;
-
+    async procesarCompraGlobal(eventoCompra: { carrito: any[], total: number }) {
     this.mensajeError = ''; 
     this.mensajeExito = '';
-    if (!eventoCompra || !eventoCompra.carrito || eventoCompra.carrito.length === 0) return;
+    
+    // Validación de datos simple y directa
+    if (!eventoCompra?.carrito?.length) return;
 
     try {
+      // 1. Insertar la compra general
       const { data: compraGuardada, error: compraError } = await this.supabase
         .from('compras')
         .insert([{ tienda_id: this.idTiendaUsuario, total: eventoCompra.total }])
@@ -248,6 +249,7 @@ export class AppComponent implements OnInit {
         return; 
       }
 
+      // 2. Registrar los detalles e incrementar el stock
       for (const item of eventoCompra.carrito) {
         await this.supabase.from('detalle_compras').insert([{
           compra_id: compraGuardada.id,
@@ -256,26 +258,22 @@ export class AppComponent implements OnInit {
           precio_costo: item.precio_costo
         }]);
 
+        // Sumamos el stock usando una estructura matemática limpia
+        const stockActual = item.stock ?? 0;
+        const cantidadComprada = item.cantidad ?? 0;
+
         await this.supabase
           .from('productos')
-          .update({ stock: (item.stock || 0) + (item.cantidad || 0) })
+          .update({ stock: stockActual + cantidadComprada })
           .eq('id', item.id);
       }
 
-      if (typeof this.mostrarMensajeExito === 'function') {
-        this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
-      }
-      if (typeof this.cargarProductos === 'function') {
-        this.cargarProductos();
-      }
+      // 3. Flujo final estándar de Angular
+      this.mostrarMensajeExito('¡Compra registrada e inventario actualizado con éxito!');
+      this.cargarProductos();
+      
     } catch (e: any) { 
-      if (this) {
-        this.mensajeError = e?.message || 'Error desconocido al procesar la compra'; 
-      }
+      this.mensajeError = e?.message || 'Error desconocido al procesar la compra'; 
     }
   }
-
-
-// publico
-
-//privado
+}
