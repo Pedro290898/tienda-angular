@@ -170,7 +170,58 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS
+    // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS CORREGIDA
+  async guardarProducto() {
+    this.mensajeError = '';
+    
+    if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null) {
+      this.mensajeError = 'Por favor, llena todos los campos del producto.';
+      return;
+    }
+
+    try {
+      // 1. Buscamos primero el ID de la tienda que le pertenece al usuario que inició sesión
+      const { data: tiendaData, error: tiendaError } = await this.supabase
+        .from('tiendas')
+        .select('id')
+        .eq('user_id', this.user.id)
+        .single();
+
+      if (tiendaError || !tiendaData) {
+        // Si no encuentra una tienda en la base de datos, le asignamos la número 1 por defecto para pruebas rápidas
+        var idFinalTienda = 1;
+      } else {
+        var idFinalTienda = tiendaData.id;
+      }
+
+      // 2. Guardamos el producto incluyendo el ID de la tienda obligatorio
+      const { data, error } = await this.supabase
+        .from('productos')
+        .insert([
+          { 
+            nombre: this.nuevoProd.nombre, 
+            precio: this.nuevoProd.precio, 
+            stock: this.nuevoProd.stock,
+            tienda_id: idFinalTienda // <-- ¡Aquí le mandamos el ID para que ya no tire error!
+          }
+        ])
+        .select();
+
+      if (error) {
+        this.mensajeError = 'Error al guardar producto: ' + error.message;
+      } else {
+        // Limpiar el formulario y recargar la lista
+        this.nuevoProd = { nombre: '', precio: null, stock: null };
+        this.cargarProductos();
+      }
+
+    } catch (e: any) {
+      this.mensajeError = 'Hubo un problema inesperado: ' + e.message;
+    }
+  }
+
+
+/*  // FUNCIÓN PARA GUARDAR UN NUEVO PRODUCTO EN LA BASE DE DATOS
   async guardarProducto() {
     this.mensajeError = '';
     
@@ -197,7 +248,7 @@ export class AppComponent implements OnInit {
       this.nuevoProd = { nombre: '', precio: null, stock: null };
       this.cargarProductos();
     }
-  }
+  }*/
 
   // ACCIONES DE LOGIN / REGISTRO
   async ejecutarAccion() {
