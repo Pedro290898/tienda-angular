@@ -14,6 +14,7 @@ import { ComprasComponent } from './compras.component';
     InventarioComponent,
     VentasComponent,
     ComprasComponent
+    ReportesComponent
   ],
   imports: [
     BrowserModule,

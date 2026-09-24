@@ -39,6 +39,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 <button (click)="pestanaActual = 'compras'" [style.background-color]="pestanaActual === 'compras' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">🛒 Registrar Compra</button>
 
 <button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
+<button (click)="pestanaActual = 'reportes'" [style.background-color]="pestanaActual === 'reportes' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📊 Reportes</button>
 
           </div>
         </div>
@@ -50,7 +51,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 <app-compras *ngIf="pestanaActual === 'compras'" [productos]="productos" (onCompraFinalizada)="procesarCompraGlobal($event)"></app-compras>
 
 <app-ventas *ngIf="pestanaActual === 'ventas'" [productos]="productos" [carrito]="carrito" [total]="obtenerTotal()" (onAgregar)="agregarAlCarrito($event)" (onCambiarCant)="cambiarCantidad($event)" (cobrar)="procesarVenta()"></app-ventas>
-        
+        <app-reportes *ngIf="pestanaActual === 'reportes'" [supabase]="supabase" [idTiendaUsuario]="idTiendaUsuario"></app-reportes>
+
         </div>
 
       <p style="color: #dc3545; text-align: center; margin-top: 15px; font-weight: bold;" *ngIf="mensajeError">{{ mensajeError }}</p>
