@@ -8,8 +8,17 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <div style="flex: 1; min-width: 300px; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px;">
         <h3 style="margin-top:0;">🛒 Selecciona Productos</h3>
         <p style="font-size:12px; color:#666;">Haz clic en un producto para añadirlo a la nota de venta:</p>
+
+                <!-- 🔍 BARRA DE BÚSQUEDA EN TIEMPO REAL -->
+        <div style="margin-bottom: 15px;">
+          <input type="text" 
+                 [(ngModel)]="terminoBusqueda" 
+                 placeholder="🔍 Buscar producto por nombre..." 
+                 style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+        </div>
+
         <div style="max-height: 400px; overflow-y: auto;">
-          <div *ngFor="let prod of productos" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; background-color: #fff;">
+          <div *<div *ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; background-color: #fff;">
             <div style="display:flex; justify-content:space-between; font-weight:bold;">
               <span>{{ prod.nombre }}</span>
               <span style="color:#28a745;">\${{ prod.precio }}</span>
@@ -61,6 +70,17 @@ export class VentasComponent {
   @Input() productos: any[] = [];
   @Input() carrito: any[] = [];
   @Input() total: number = 0;
+
+    terminoBusqueda: string = '';
+
+  get productosFiltrados() {
+    if (!this.terminoBusqueda.trim()) {
+      return this.productos;
+    }
+    return this.productos.filter(prod => 
+      prod.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
+    );
+  }
 
   @Output() onAgregar = new EventEmitter<any>();
   @Output() onCambiarCant = new EventEmitter<any>();
