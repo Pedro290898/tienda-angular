@@ -31,10 +31,14 @@ import { SupabaseClient } from '@supabase/supabase-js';
           <h2 style="margin: 5px 0 0 0; color: #bd2130;">\${{ datosReporte.total_compras | number:'1.2-2' }}</h2>
         </div>
 
-        <div style="flex: 1; [style.background-color]="datosReporte.ganancia_neta >= 0 ? '#e8f4fd' : '#fff3cd'" [style.border-left]="datosReporte.ganancia_neta >= 0 ? '5px solid #007bff' : '5px solid #ffc107'" padding: 15px; border-radius: 4px;">
+                <!-- TERCERA TARJETA CORREGIDA Y LIMPIA -->
+        <div [style.background-color]="datosReporte.ganancia_neta >= 0 ? '#e8f4fd' : '#fff3cd'" 
+             [style.border-left]="datosReporte.ganancia_neta >= 0 ? '5px solid #007bff' : '5px solid #ffc107'" 
+             style="flex: 1; padding: 15px; border-radius: 4px;">
           <small [style.color]="datosReporte.ganancia_neta >= 0 ? '#007bff' : '#856404'" style="font-weight: bold; text-transform: uppercase;">📈 Utilidad / Ganancia Neta</small>
           <h2 style="margin: 5px 0 0 0;" [style.color]="datosReporte.ganancia_neta >= 0 ? '#0062cc' : '#721c24'">\${{ datosReporte.ganancia_neta | number:'1.2-2' }}</h2>
         </div>
+
       </div>
 
       <ng-template #cargandoTemplate>
