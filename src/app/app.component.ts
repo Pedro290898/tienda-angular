@@ -25,23 +25,27 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
         <p style="text-align: center; margin-top: 15px;"><a href="#" (click)="$event.preventDefault(); esRegistro = !esRegistro">{{ esRegistro ? 'Inicia sesión' : 'Regístrate aquí' }}</a></p>
       </div>
 
-      <!-- PANTALLA PRINCIPAL DEL SISTEMA -->
+            <!-- PANTALLA PRINCIPAL DEL SISTEMA (CABECERA CORREGIDA) -->
       <div *ngIf="user">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
-          <div>
-            <h2 style="margin: 0; color: #007bff;">🏪 Sistema POS Modular</h2>
-            <small style="color: #666;">Usuario: {{ user.email }}</small>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; gap: 15px;">
+          
+          <!-- Título y Usuario -->
+          <div style="flex: 1; min-width: 250px;">
+            <h2 style="margin: 0; color: #007bff; font-size: 24px;">🏪 Sistema POS Modular</h2>
+            <small style="color: #666; font-weight: bold;">Usuario: {{ user.email }}</small>
           </div>
-          <div>
-          <button (click)="pestanaActual = 'inventario'" [style.background-color]="pestanaActual === 'inventario' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📦 Inventario</button>
-
-<!-- NUEVO BOTÓN DE COMPRAS -->
-<button (click)="pestanaActual = 'compras'" [style.background-color]="pestanaActual === 'compras' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">🛒 Registrar Compra</button>
-
-<button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
-<button (click)="pestanaActual = 'reportes'" [style.background-color]="pestanaActual === 'reportes' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; font-weight: bold;">📊 Reportes</button>
-
+          
+          <!-- Botones de Navegación -->
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+            <button (click)="pestanaActual = 'inventario'" [style.background-color]="pestanaActual === 'inventario' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">📦 Inventario</button>
+            <button (click)="pestanaActual = 'compras'" [style.background-color]="pestanaActual === 'compras' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">🛒 Registrar Compra</button>
+            <button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
+            <button (click)="pestanaActual = 'reportes'" [style.background-color]="pestanaActual === 'reportes' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">📊 Reportes</button>
+            
+            <!-- Botón Salir integrado de forma compacta -->
+            <button (click)="cerrarSesion()" style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px;">🚪 Salir</button>
           </div>
+
         </div>
 
         <!-- USAMOS LOS COMPONENTES HIJOS PEQUEÑOS -->
