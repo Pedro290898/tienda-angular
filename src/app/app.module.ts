@@ -14,7 +14,7 @@ import { ReportesComponent } from './reportes.component';
     AppComponent,
     InventarioComponent,
     VentasComponent,
-    ComprasComponent
+    ComprasComponent,
     ReportesComponent
   ],
   imports: [
