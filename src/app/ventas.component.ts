@@ -4,12 +4,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   selector: 'app-ventas',
   template: `
     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-      <!-- SELECCIONAR PRODUCTOS -->
+      <!-- 1.- SELECCIONAR PRODUCTOS -->
       <div style="flex: 1; min-width: 300px; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px;">
         <h3 style="margin-top:0;">🛒 Selecciona Productos</h3>
         <p style="font-size:12px; color:#666;">Haz clic en un producto para añadirlo a la nota de venta:</p>
-
-                <!-- 🔍 BARRA DE BÚSQUEDA EN TIEMPO REAL -->
+        
+        <!-- 🔍 BARRA DE BÚSQUEDA EN TIEMPO REAL -->
         <div style="margin-bottom: 15px;">
           <input type="text" 
                  [(ngModel)]="terminoBusqueda" 
@@ -18,7 +18,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         </div>
 
         <div style="max-height: 400px; overflow-y: auto;">
-          <div*ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; background-color: #fff;">
+          <div *ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer;">
             <div style="display:flex; justify-content:space-between; font-weight:bold;">
               <span>{{ prod.nombre }}</span>
               <span style="color:#28a745;">\${{ prod.precio }}</span>
