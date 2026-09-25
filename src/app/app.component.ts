@@ -220,9 +220,9 @@ export class AppComponent implements OnInit {
       this.cargarProductos();
       
       // Si tienes la función de reportes activa, la recargamos de una vez
-      if (typeof this.cargarVentasHoy === 'function') {
+      /*if (typeof this.cargarVentasHoy === 'function') {
         this.cargarVentasHoy();
-      }
+      }*/
       
     } catch (e: any) { 
       this.mensajeError = e.message; 
