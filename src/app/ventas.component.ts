@@ -18,7 +18,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         </div>
 
         <div style="max-height: 400px; overflow-y: auto;">
-          <div *<div *ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; background-color: #fff;">
+          <div*ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; background-color: #fff;">
             <div style="display:flex; justify-content:space-between; font-weight:bold;">
               <span>{{ prod.nombre }}</span>
               <span style="color:#28a745;">\${{ prod.precio }}</span>
