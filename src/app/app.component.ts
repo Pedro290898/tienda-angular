@@ -177,7 +177,60 @@ export class AppComponent implements OnInit {
 
   obtenerTotal() { return this.carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0); }
 
-  async procesarVenta() {
+    async procesarVenta() {
+    this.mensajeError = ''; this.mensajeExito = '';
+    if (this.carrito.length === 0) return;
+
+    try {
+      // 1. Insertar el encabezado de la venta (igual que antes)
+      const { data: ventaGuardada, error: ventaError } = await this.supabase
+        .from('ventas')
+        .insert([{ tienda_id: this.idTiendaUsuario, total: this.obtenerTotal() }])
+        .select()
+        .single();
+
+      if (ventaError) { this.mensajeError = ventaError.message; return; }
+
+      // 🌟 MEJORA 1: Preparamos un arreglo con todos los detalles para enviarlos EN LOTE
+      const detallesFila = this.carrito.map(item => ({
+        venta_id: ventaGuardada.id,
+        producto_id: item.id,
+        cantidad: item.cantidad,
+        precio_unitario: item.precio
+      }));
+
+      // Enviamos TODO el detalle de una sola vez (Un solo viaje al servidor)
+      const { error: detalleError } = await this.supabase.from('detalle_ventas').insert(detallesFila);
+      if (detalleError) { this.mensajeError = detalleError.message; return; }
+
+      // 🌟 MEJORA 2: Actualizamos los inventarios EN PARALELO (Todos al mismo tiempo)
+      const promesasStock = this.carrito.map(item => {
+        return this.supabase
+          .from('productos')
+          .update({ stock: item.stock - item.cantidad })
+          .eq('id', item.id);
+      });
+
+      // Promise.all espera a que todas las actualizaciones terminen en simultáneo
+      await Promise.all(promesasStock);
+
+      // Flujo final limpio
+      this.mostrarMensajeExito('¡Venta cobrada con éxito!');
+      this.carrito = [];
+      this.cargarProductos();
+      
+      // Si tienes la función de reportes activa, la recargamos de una vez
+      if (typeof this.cargarVentasHoy === 'function') {
+        this.cargarVentasHoy();
+      }
+      
+    } catch (e: any) { 
+      this.mensajeError = e.message; 
+    }
+  }
+
+
+  /*async procesarVenta() {
     this.mensajeError = ''; this.mensajeExito = '';
     if (this.carrito.length === 0) return; // Validación extra de seguridad
 
@@ -201,7 +254,7 @@ export class AppComponent implements OnInit {
       this.carrito = [];
       this.cargarProductos();
     } catch (e: any) { this.mensajeError = e.message; }
-  }
+  }*/
 
   async ejecutarAccion() {
     this.mensajeError = '';
