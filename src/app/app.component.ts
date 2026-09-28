@@ -17,10 +17,22 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
           <label style="display: block; margin-bottom: 5px;">Correo:</label>
           <input type="email" [(ngModel)]="email" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
         </div>
-        <div style="margin-bottom: 15px;">
+        
+                <div style="margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 5px;">Contraseña:</label>
-          <input type="password" [(ngModel)]="password" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+          <div style="position: relative; display: flex; align-items: center;">
+            <input [type]="mostrarContrasena ? 'text' : 'password'" 
+                   [(ngModel)]="password" 
+                   style="width: 100%; padding: 8px; padding-right: 40px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+            <button type="button"
+                    (click)="mostrarContrasena = !mostrarContrasena"
+                    style="position: absolute; right: 5px; background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; user-select: none;">
+              {{ mostrarContrasena ? '👁️‍🗨️' : '👁️' }}
+            </button>
+          </div>
         </div>
+
+
         <button (click)="ejecutarAccion()" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">{{ esRegistro ? 'Crear Cuenta' : 'Entrar' }}</button>
         <p style="text-align: center; margin-top: 15px;"><a href="#" (click)="$event.preventDefault(); esRegistro = !esRegistro">{{ esRegistro ? 'Inicia sesión' : 'Regístrate aquí' }}</a></p>
       </div>
@@ -81,6 +93,8 @@ export class AppComponent implements OnInit {
   nombreTienda = ''; email = ''; password = ''; mensajeError = ''; mensajeExito = '';
   productos: any[] = []; carrito: any[] = [];
   idTiendaUsuario: number | null = null; // Guardamos el ID de la tienda del usuario actual
+  mostrarContrasena: boolean = false;
+
 
   async ngOnInit() {
     const { data } = await this.supabase.auth.getSession();
@@ -232,34 +246,12 @@ export class AppComponent implements OnInit {
   }
 
 
-  /*async procesarVenta() {
-    this.mensajeError = ''; this.mensajeExito = '';
-    if (this.carrito.length === 0) return; // Validación extra de seguridad
-
-    try {
-      const { data: ventaGuardada, error: ventaError } = await this.supabase
-        .from('ventas')
-        .insert([{ tienda_id: this.idTiendaUsuario, total: this.obtenerTotal() }])
-        .select()
-        .single();
-
-      if (ventaError) { this.mensajeError = ventaError.message; return; }
-
-      for (const item of this.carrito) {
-        await this.supabase.from('detalle_ventas').insert([{
-          venta_id: ventaGuardada.id, producto_id: item.id, cantidad: item.cantidad, precio_unitario: item.precio
-        }]);
-        await this.supabase.from('productos').update({ stock: item.stock - item.cantidad }).eq('id', item.id);
-      }
-
-      this.mostrarMensajeExito('¡Venta cobrada con éxito!');
-      this.carrito = [];
-      this.cargarProductos();
-    } catch (e: any) { this.mensajeError = e.message; }
-  }*/
-
   async ejecutarAccion() {
     this.mensajeError = '';
+    // Cambia: mostrarContrasena = false;
+// Por:
+this.mostrarContrasena = false;
+
     try {
       if (this.esRegistro) {
         // REGISTRO DE USUARIO NUEVO
