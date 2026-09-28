@@ -9,11 +9,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         <h3 style="margin-top:0;">🛒 Selecciona Productos</h3>
         <p style="font-size:12px; color:#666;">Haz clic en un producto para añadirlo a la nota de venta:</p>
         
-        <!-- 🔍 BARRA DE BÚSQUEDA EN TIEMPO REAL -->
+                <!-- 🔍 BARRA DE BÚSQUEDA EN TIEMPO REAL -->
         <div style="margin-bottom: 15px;">
           <input type="text" 
                  [(ngModel)]="terminoBusqueda" 
                  placeholder="🔍 Buscar producto por nombre..." 
+                 style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+        </div>
 
         <!-- 🖨️ FOCO DEL ESCÁNER DE CÓDIGO DE BARRAS -->
         <div style="margin-bottom: 15px; background-color: #f1f3f5; padding: 10px; border-radius: 4px; border: 1px solid #ced4da;">
@@ -24,6 +26,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
                  placeholder="Haz clic aquí y escanea un producto..." 
                  style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #007bff; border-radius: 4px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">
         </div>
+barras1
 
                  style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
         </div>
