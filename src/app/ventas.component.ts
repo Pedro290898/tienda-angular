@@ -14,6 +14,17 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
           <input type="text" 
                  [(ngModel)]="terminoBusqueda" 
                  placeholder="🔍 Buscar producto por nombre..." 
+
+        <!-- 🖨️ FOCO DEL ESCÁNER DE CÓDIGO DE BARRAS -->
+        <div style="margin-bottom: 15px; background-color: #f1f3f5; padding: 10px; border-radius: 4px; border: 1px solid #ced4da;">
+          <label style="display: block; font-size: 11px; font-weight: bold; color: #495057; margin-bottom: 4px; text-transform: uppercase;">⚡ Lector de Código de Barras (Pistola Láser)</label>
+          <input type="text" 
+                 [(ngModel)]="codigoEscaneado" 
+                 (keydown.enter)="buscarPorCodigoBarras()"
+                 placeholder="Haz clic aquí y escanea un producto..." 
+                 style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #007bff; border-radius: 4px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">
+        </div>
+
                  style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
         </div>
 
@@ -70,8 +81,11 @@ export class VentasComponent {
   @Input() productos: any[] = [];
   @Input() carrito: any[] = [];
   @Input() total: number = 0;
+  
 
     terminoBusqueda: string = '';
+    codigoEscaneado: string = '';
+
 
   get productosFiltrados() {
     if (!this.terminoBusqueda.trim()) {
@@ -80,6 +94,22 @@ export class VentasComponent {
     return this.productos.filter(prod => 
       prod.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
     );
+  }
+//buscar por codigo de barras
+  buscarPorCodigoBarras() {
+    const codigo = this.codigoEscaneado.trim();
+    if (!codigo) return;
+
+    // Busca si algún producto coincide con el código escaneado
+    const productoEncontrado = this.productos.find(p => p.codigo_barras === codigo);
+
+    if (productoEncontrado) {
+      this.agregar(productoEncontrado); // Lo mete al carrito
+    } else {
+      alert('⚠️ Producto no registrado con el código: ' + codigo);
+    }
+
+    this.codigoEscaneado = ''; // Limpia la caja para el siguiente escaneo
   }
 
   @Output() onAgregar = new EventEmitter<any>();
