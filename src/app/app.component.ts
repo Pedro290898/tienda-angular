@@ -41,7 +41,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
             <button (click)="pestanaActual = 'compras'" [style.background-color]="pestanaActual === 'compras' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">🛒 Registrar Compra</button>
             <button (click)="pestanaActual = 'ventas'" [style.background-color]="pestanaActual === 'ventas' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">💰 Punto de Venta</button>
             <button (click)="pestanaActual = 'reportes'" [style.background-color]="pestanaActual === 'reportes' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">📊 Reportes</button>
-            
+            <button (click)="pestanaActual = 'soporte'" [style.background-color]="pestanaActual === 'soporte' ? '#007bff' : '#6c757d'" style="padding: 10px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px;">💬 Soporte</button>
+
             <!-- Botón Salir integrado de forma compacta -->
             <button (click)="cerrarSesion()" style="padding: 10px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px;">🚪 Salir</button>
           </div>
@@ -56,6 +57,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 <app-ventas *ngIf="pestanaActual === 'ventas'" [productos]="productos" [carrito]="carrito" [total]="obtenerTotal()" (onAgregar)="agregarAlCarrito($event)" (onCambiarCant)="cambiarCantidad($event)" (cobrar)="procesarVenta()"></app-ventas>
         <app-reportes *ngIf="pestanaActual === 'reportes'" [supabase]="supabase" [idTiendaUsuario]="idTiendaUsuario"></app-reportes>
+        <app-soporte *ngIf="pestanaActual === 'soporte'" [supabase]="supabase" [user]="user"></app-soporte>
 
         </div>
 

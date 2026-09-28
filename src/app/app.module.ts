@@ -8,6 +8,7 @@ import { VentasComponent } from './ventas.component';
 // 1. Añadimos la importación provisional del nuevo componente
 import { ComprasComponent } from './compras.component';
 import { ReportesComponent } from './reportes.component';
+import { SoporteComponent } from './soporte.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { ReportesComponent } from './reportes.component';
     InventarioComponent,
     VentasComponent,
     ComprasComponent,
-    ReportesComponent
+    ReportesComponent,
+    SoporteComponent
   ],
   imports: [
     BrowserModule,
