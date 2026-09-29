@@ -6,6 +6,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 25px; border: 1px solid #e9ecef;">
       <h3 style="margin-top: 0; color: #333;">📦 Agregar Producto al Inventario</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        
+        <!-- ⚡ NUEVA CAJITA: CÓDIGO DE BARRAS -->
+        <div style="flex: 1; min-width: 150px;">
+          <label style="display:block; font-size:12px; margin-bottom:3px; font-weight: bold; color: #007bff;">⚡ Código de Barras:</label>
+          <input type="text" [(ngModel)]="nuevoProd.codigoBarras" placeholder="Escanea o escribe..." style="width:100%; padding:8px; border:1px solid #007bff; border-radius:4px; font-weight: bold;">
+        </div>
+
         <div style="flex: 2; min-width: 200px;">
           <label style="display:block; font-size:12px; margin-bottom:3px;">Nombre del Producto:</label>
           <input type="text" [(ngModel)]="nuevoProd.nombre" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
@@ -21,6 +28,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         <div style="flex: 1; min-width: 120px; display: flex; align-items: flex-end;">
           <button (click)="guardar()" style="width:100%; padding:10px; background-color: #28a745; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">＋ Guardar</button>
         </div>
+        
       </div>
     </div>
 
@@ -29,6 +37,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <thead>
         <tr style="background-color: #007bff; color: white;">
           <th style="padding: 10px; border: 1px solid #dee2e6;">ID</th>
+          <!-- ⚡ NUEVA COLUMNA EN LA TABLA -->
+          <th style="padding: 10px; border: 1px solid #dee2e6;">Código de Barras</th>
           <th style="padding: 10px; border: 1px solid #dee2e6;">Producto</th>
           <th style="padding: 10px; border: 1px solid #dee2e6;">Precio</th>
           <th style="padding: 10px; border: 1px solid #dee2e6;">Stock</th>
@@ -37,6 +47,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <tbody>
         <tr *ngFor="let prod of productos" style="border-bottom: 1px solid #dee2e6;">
           <td style="padding: 10px; border: 1px solid #dee2e6; color: #666;">{{ prod.id }}</td>
+          <!-- ⚡ MOSTRAR EL CÓDIGO GUARDADO -->
+          <td style="padding: 10px; border: 1px solid #dee2e6; font-family: monospace; font-weight: bold; color: #555;">{{ prod.codigo_barras || '---' }}</td>
           <td style="padding: 10px; border: 1px solid #dee2e6; font-weight: bold;">{{ prod.nombre }}</td>
           <td style="padding: 10px; border: 1px solid #dee2e6; color: #28a745;">\${{ prod.precio }}</td>
           <td style="padding: 10px; border: 1px solid #dee2e6;" [style.color]="prod.stock <= 5 ? 'red' : 'black'">
@@ -51,14 +63,15 @@ export class InventarioComponent {
   @Input() productos: any[] = [];
   @Output() onGuardar = new EventEmitter<any>();
 
-  nuevoProd = { nombre: '', precio: null, stock: null };
+  nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras = '';
+ };
 
   guardar() {
-    if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null) {
+    if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null || this.nuevoProd.codigoBarras === null ) {
       alert('Por favor, llena todos los campos.');
       return;
     }
     this.onGuardar.emit({ ...this.nuevoProd });
-    this.nuevoProd = { nombre: '', precio: null, stock: null };
+    this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 }
