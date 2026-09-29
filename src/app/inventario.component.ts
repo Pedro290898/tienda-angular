@@ -63,7 +63,7 @@ export class InventarioComponent {
   @Input() productos: any[] = [];
   @Output() onGuardar = new EventEmitter<any>();
 
-  nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras = '';
+  nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras : '';
  };
 
   guardar() {
