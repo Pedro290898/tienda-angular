@@ -17,6 +17,17 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
                  style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
         </div>
 
+                <!-- 🖨️ FOCO DEL ESCÁNER DE CÓDIGO DE BARRAS -->
+        <div style="margin-bottom: 15px; background-color: #f1f3f5; padding: 10px; border-radius: 4px; border: 1px solid #ced4da;">
+          <label style="display: block; font-size: 11px; font-weight: bold; color: #495057; margin-bottom: 4px; text-transform: uppercase;">⚡ Lector de Código de Barras (Pistola Láser)</label>
+          <input type="text" 
+                 [(ngModel)]="codigoEscaneado" 
+                 (keydown.enter)="buscarPorCodigoBarras()"
+                 placeholder="Haz clic aquí y escanea un producto..." 
+                 style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #007bff; border-radius: 4px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">
+        </div>
+
+
         <div style="max-height: 400px; overflow-y: auto;">
           <div *ngFor="let prod of productosFiltrados" (click)="agregar(prod)" style="padding: 10px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer;">
             <div style="display:flex; justify-content:space-between; font-weight:bold;">
