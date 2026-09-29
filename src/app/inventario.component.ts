@@ -8,8 +8,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         
         <!-- ⚡ NUEVA CAJITA: CÓDIGO DE BARRAS -->
-        <div style="flex: 1.5; min-width: 180px;">
-          <label style="display:block; font-size:12px; margin-bottom:5px; font-weight: bold; color: #007bff;">⚡ Código de Barras:</label>
+        <div style="flex: 1; min-width: 180px;">
+          <label style="display:block; font-size:12px; margin-bottom:3px; font-weight: bold; color: #007bff;"> Código de Barras:</label>
           <input type="text" [(ngModel)]="nuevoProd.codigoBarras" placeholder="Escanea o escribe..." style="width:100%; padding:8px; box-sizing: border-box; border:1px solid #007bff; border-radius:4px; font-weight: bold; height: 38px;">
         </div>
 
