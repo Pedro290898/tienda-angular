@@ -92,15 +92,30 @@ export class ReportesComponent implements OnInit, OnChanges {
     { id: 'anio', nombre: 'Este Año' }
   ];
 
-  ngOnInit() {
+  //ngOnInit() {
+  //  this.cargarTodoElReporte();
+  //}
+
+    ngOnInit() {
+    this.periodoActual = 'dia'; // 🌟 Forzamos que inicie en el día de hoy
     this.cargarTodoElReporte();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+
+  /*ngOnChanges(changes: SimpleChanges) {
     if (changes['idTiendaUsuario'] && this.idTiendaUsuario) {
       this.cargarTodoElReporte();
     }
+  }*/
+
+      ngOnChanges(changes: SimpleChanges) {
+    // Si cambia el ID de la tienda y es un valor válido, recalculamos el día de hoy
+    if (changes['idTiendaUsuario'] && this.idTiendaUsuario) {
+      this.periodoActual = 'dia'; 
+      this.cargarTodoElReporte();
+    }
   }
+
 
   cambiarPeriodo(periodoId: string) {
     this.periodoActual = periodoId;
