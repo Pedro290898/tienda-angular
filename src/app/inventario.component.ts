@@ -10,7 +10,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         <!-- ⚡ NUEVA CAJITA: CÓDIGO DE BARRAS -->
         <div style="flex: 1; min-width: 150px;">
           <label style="display:block; font-size:12px; margin-bottom:3px; font-weight: bold; color: #007bff;">⚡ Código de Barras:</label>
-          <input type="text" [(ngModel)]="nuevoProd.codigoBarras" placeholder="Escanea o escribe..." style="width:100%; padding:8px; border:1px solid #007bff; border-radius:4px; font-weight: bold;">
+          <input type="text" [(ngModel)]="nuevoProd.codigoBarras" placeholder="Escanea o escribe..." style="width:100%; padding:8px; border:1px solid #007bff; border-radius:4px;">
         </div>
 
         <div style="flex: 2; min-width: 200px;">
