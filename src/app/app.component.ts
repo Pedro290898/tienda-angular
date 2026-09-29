@@ -154,7 +154,28 @@ export class AppComponent implements OnInit {
     if (!error) this.productos = data || [];
   }
 
-  async guardarProducto(nuevoProd: any) {
+    async guardarProducto(nuevoProd: any) {
+    this.mensajeError = ''; this.mensajeExito = '';
+    try {
+      const { error } = await this.supabase.from('productos').insert([{ 
+        nombre: nuevoProd.nombre, 
+        precio: nuevoProd.precio, 
+        stock: nuevoProd.stock, 
+        tienda_id: this.idTiendaUsuario,
+        codigo_barras: nuevoProd.codigoBarras // 👈 ¡SÓLO AGREGA ESTA LÍNEA AQUÍ!
+      }]);
+
+      if (error) {
+        this.mensajeError = error.message;
+      } else { 
+        this.mostrarMensajeExito('¡Producto agregado!'); 
+        this.cargarProductos(); 
+      }
+    } catch (e: any) { this.mensajeError = e.message; }
+  }
+
+
+  /*async guardarProducto(nuevoProd: any) {
     this.mensajeError = ''; this.mensajeExito = '';
     try {
       const { error } = await this.supabase.from('productos').insert([{ 
@@ -171,7 +192,7 @@ export class AppComponent implements OnInit {
         this.cargarProductos(); 
       }
     } catch (e: any) { this.mensajeError = e.message; }
-  }
+  }*/
 
   agregarAlCarrito(producto: any) {
     this.mensajeError = ''; this.mensajeExito = '';
