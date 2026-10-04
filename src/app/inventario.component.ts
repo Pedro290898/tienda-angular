@@ -55,6 +55,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
           <td style="padding: 10px; border: 1px solid #dee2e6;" [style.color]="prod.stock <= 5 ? 'red' : 'black'">
             {{ prod.stock }} pzas {{ prod.stock <= 5 ? '(Bajo Stock)' : '' }}
           </td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">
+        <button 
+          (click)="seleccionarProductoParaEditar(prod)"
+          style="background-color: #ffc107; color: #212529; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+          Editar
+        </button>
+      </td>
         </tr>
       </tbody>
     </table>
