@@ -42,6 +42,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
           <th style="padding: 10px; border: 1px solid #dee2e6;">Producto</th>
           <th style="padding: 10px; border: 1px solid #dee2e6;">Precio</th>
           <th style="padding: 10px; border: 1px solid #dee2e6;">Stock</th>
+          <th style="padding: 10px; border: 1px solid #dee2e6;">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -74,5 +75,5 @@ export class InventarioComponent {
     this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 
-  
+
 }
