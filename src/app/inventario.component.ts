@@ -82,5 +82,10 @@ export class InventarioComponent {
     this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 
+  seleccionarProductoParaEditar(producto: any) {
+  console.log('Producto seleccionado para editar:', producto);
+  // Aquí pondremos la lógica para rellenar los inputs de arriba
+}
+
 
 }
