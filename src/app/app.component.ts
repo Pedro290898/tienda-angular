@@ -175,24 +175,7 @@ export class AppComponent implements OnInit {
   }
 
 
-  /*async guardarProducto(nuevoProd: any) {
-    this.mensajeError = ''; this.mensajeExito = '';
-    try {
-      const { error } = await this.supabase.from('productos').insert([{ 
-        nombre: nuevoProd.nombre, 
-        precio: nuevoProd.precio, 
-        stock: nuevoProd.stock, 
-        tienda_id: this.idTiendaUsuario
-      }]);
 
-      if (error) {
-        this.mensajeError = error.message;
-      } else { 
-        this.mostrarMensajeExito('¡Producto agregado!'); 
-        this.cargarProductos(); 
-      }
-    } catch (e: any) { this.mensajeError = e.message; }
-  }*/
 
   agregarAlCarrito(producto: any) {
     this.mensajeError = ''; this.mensajeExito = '';

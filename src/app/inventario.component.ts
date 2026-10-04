@@ -73,4 +73,6 @@ export class InventarioComponent {
     this.onGuardar.emit({ ...this.nuevoProd });
     this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
+
+  
 }
