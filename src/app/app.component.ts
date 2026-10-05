@@ -154,7 +154,7 @@ export class AppComponent implements OnInit {
     if (!error) this.productos = data || [];
   }
 
-    async guardarProducto(nuevoProd: any) {
+    /*async guardarProducto(nuevoProd: any) {
     this.mensajeError = ''; this.mensajeExito = '';
     try {
       const { error } = await this.supabase.from('productos').insert([{ 
@@ -172,7 +172,56 @@ export class AppComponent implements OnInit {
         this.cargarProductos(); 
       }
     } catch (e: any) { this.mensajeError = e.message; }
+  }*/
+
+    async guardarProducto(nuevoProd: any) {
+  this.mensajeError = ''; 
+  this.mensajeExito = '';
+  
+  try {
+    if (this.esModoEditar) {
+      // ✏️ LÓGICA PARA ACTUALIZAR EN SUPABASE
+      const { error } = await this.supabase
+        .from('productos')
+        .update({ 
+          nombre: nuevoProd.nombre, 
+          precio: nuevoProd.precio, 
+          stock: nuevoProd.stock,
+          codigo_barras: nuevoProd.codigoBarras
+        })
+        .eq('id', nuevoProd.id); // 👈 Filtra por el ID del producto que estás editando
+
+      if (error) {
+        this.mensajeError = error.message;
+      } else { 
+        this.mostrarMensajeExito('¡Producto actualizado con éxito!'); 
+        this.cargarProductos(); 
+        this.limpiarFormulario(); // 👈 Limpia los inputs al terminar
+      }
+
+    } else {
+      // ➕ LÓGICA ORIGINAL PARA AGREGAR
+      const { error } = await this.supabase.from('productos').insert([{ 
+        nombre: nuevoProd.nombre, 
+        precio: nuevoProd.precio, 
+        stock: nuevoProd.stock, 
+        tienda_id: this.idTiendaUsuario,
+        codigo_barras: nuevoProd.codigoBarras
+      }]);
+
+      if (error) {
+        this.mensajeError = error.message;
+      } else { 
+        this.mostrarMensajeExito('¡Producto agregado!'); 
+        this.cargarProductos(); 
+        this.limpiarFormulario(); // 👈 Limpia los inputs al terminar
+      }
+    }
+  } catch (e: any) { 
+    this.mensajeError = e.message; 
   }
+}
+
 
 
 

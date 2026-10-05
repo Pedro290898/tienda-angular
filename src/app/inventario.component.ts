@@ -82,9 +82,27 @@ export class InventarioComponent {
     this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 
+  esModoEditar: boolean = false;
+
+limpiarFormulario() {
+  this.nuevoProd = { codigoBarras: '', nombre: '', precio: null, stock: null };
+  this.esModoEditar = false;
+}
+
+
   seleccionarProductoParaEditar(producto: any) {
   console.log('Producto seleccionado para editar:', producto);
+
+  this.esModoEditar = true;
   // Aquí pondremos la lógica para rellenar los inputs de arriba
+
+   // Clonamos el objeto y adaptamos el campo snake_case de Supabase a tu camelCase
+  this.nuevoProd = { 
+    id: producto.id, // Guardamos el ID para poder usar el .eq('id', ...) en Supabase
+    nombre: producto.nombre,
+    precio: producto.precio,
+    stock: producto.stock,
+    codigoBarras: producto.codigo_barras // Mapeo de BD a Input
 }
 
 
