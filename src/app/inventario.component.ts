@@ -73,7 +73,7 @@ export class InventarioComponent {
 
   esModoEditar: boolean = false;
 
-  nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras : ''};
+  nuevoProd = {id: null as any, nombre: '', precio: null, stock: null, codigoBarras : ''};
 
   guardar() {
     if (!this.nuevoProd.nombre || this.nuevoProd.precio === null || this.nuevoProd.stock === null || this.nuevoProd.codigoBarras === null ) {
@@ -103,7 +103,7 @@ export class InventarioComponent {
 }
 
   limpiarFormulario() {
-    this.nuevoProd = { id: null, nombre: '', precio: null, stock: null, codigoBarras: '' };
+    this.nuevoProd = { id: null as any, nombre: '', precio: null, stock: null, codigoBarras: '' };
     this.esModoEditar = false;
   }
 
