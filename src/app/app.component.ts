@@ -177,13 +177,14 @@ export class AppComponent implements OnInit {
 nuevoProd: any = { id: null, codigoBarras: '', nombre: '', precio: null, stock: null };
 esModoEditar: boolean = false;*/
 
-    async guardarProducto(nuevoProd: any) {
+  async guardarProducto(nuevoProd: any) {
   this.mensajeError = ''; 
   this.mensajeExito = '';
   
   try {
-    if (this.esModoEditar) {
-      // ✏️ LÓGICA PARA ACTUALIZAR EN SUPABASE
+    // 🔍 En lugar de 'this.esModoEditar', comprobamos si el producto que viene del hijo ya tiene un ID
+    if (nuevoProd.id) {
+      // ✏️ ACTUALIZAR EN SUPABASE
       const { error } = await this.supabase
         .from('productos')
         .update({ 
@@ -192,18 +193,18 @@ esModoEditar: boolean = false;*/
           stock: nuevoProd.stock,
           codigo_barras: nuevoProd.codigoBarras
         })
-        .eq('id', nuevoProd.id); // 👈 Filtra por el ID del producto que estás editando
+        .eq('id', nuevoProd.id);
 
       if (error) {
         this.mensajeError = error.message;
       } else { 
         this.mostrarMensajeExito('¡Producto actualizado con éxito!'); 
         this.cargarProductos(); 
-        this.limpiarFormulario(); // 👈 Limpia los inputs al terminar
+        // Nota: El formulario se limpia en el hijo automáticamente tras el emit
       }
 
     } else {
-      // ➕ LÓGICA ORIGINAL PARA AGREGAR
+      // ➕ AGREGAR ORIGINAL EN SUPABASE
       const { error } = await this.supabase.from('productos').insert([{ 
         nombre: nuevoProd.nombre, 
         precio: nuevoProd.precio, 
@@ -217,7 +218,6 @@ esModoEditar: boolean = false;*/
       } else { 
         this.mostrarMensajeExito('¡Producto agregado!'); 
         this.cargarProductos(); 
-        this.limpiarFormulario(); // 👈 Limpia los inputs al terminar
       }
     }
   } catch (e: any) { 
