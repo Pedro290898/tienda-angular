@@ -71,6 +71,8 @@ export class InventarioComponent {
   @Input() productos: any[] = [];
   @Output() onGuardar = new EventEmitter<any>();
 
+  esModoEditar: boolean = false;
+
   nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras : ''};
 
   guardar() {
@@ -99,6 +101,11 @@ export class InventarioComponent {
     stock: producto.stock,
     codigoBarras: producto.codigo_barras // Mapeo de BD a Input
 }
+
+  limpiarFormulario() {
+    this.nuevoProd = { id: null, nombre: '', precio: null, stock: null, codigoBarras: '' };
+    this.esModoEditar = false;
+  }
 
 
 }

@@ -172,10 +172,10 @@ export class AppComponent implements OnInit {
         this.cargarProductos(); 
       }
     } catch (e: any) { this.mensajeError = e.message; }
-  }*/
+  }
 
 nuevoProd: any = { id: null, codigoBarras: '', nombre: '', precio: null, stock: null };
-esModoEditar: boolean = false;
+esModoEditar: boolean = false;*/
 
     async guardarProducto(nuevoProd: any) {
   this.mensajeError = ''; 
