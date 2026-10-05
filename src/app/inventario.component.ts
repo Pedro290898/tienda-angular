@@ -82,12 +82,7 @@ export class InventarioComponent {
     this.nuevoProd = { nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 
-  esModoEditar: boolean = false;
 
-limpiarFormulario() {
-  this.nuevoProd = { codigoBarras: '', nombre: '', precio: null, stock: null };
-  this.esModoEditar = false;
-}
 
 
   seleccionarProductoParaEditar(producto: any) {
