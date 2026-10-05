@@ -174,12 +174,8 @@ export class AppComponent implements OnInit {
     } catch (e: any) { this.mensajeError = e.message; }
   }*/
 
-      esModoEditar: boolean = false;
-
-limpiarFormulario() {
-  this.nuevoProd = { codigoBarras: '', nombre: '', precio: null, stock: null };
-  this.esModoEditar = false;
-}
+nuevoProd: any = { id: null, codigoBarras: '', nombre: '', precio: null, stock: null };
+esModoEditar: boolean = false;
 
     async guardarProducto(nuevoProd: any) {
   this.mensajeError = ''; 
