@@ -84,7 +84,10 @@ export class InventarioComponent {
     this.nuevoProd = { id: null as any, nombre: '', precio: null, stock: null, codigoBarras: '' };
   }
 
-
+  limpiarFormulario() {
+    this.nuevoProd = { id: null as any, nombre: '', precio: null, stock: null, codigoBarras: '' };
+    this.esModoEditar = false;
+  }
 
 
   seleccionarProductoParaEditar(producto: any) {
@@ -102,9 +105,6 @@ export class InventarioComponent {
     codigoBarras: producto.codigo_barras // Mapeo de BD a Input
 }
 
-  limpiarFormulario() {
-    this.nuevoProd = { id: null as any, nombre: '', precio: null, stock: null, codigoBarras: '' };
-    this.esModoEditar = false;
   }
 
 
